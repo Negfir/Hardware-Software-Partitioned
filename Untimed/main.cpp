@@ -2,18 +2,20 @@
 #include "systemc.h"
 #include "interface.h"
 #include "memory.h"
+//#include "bus.h"
+#include "software.h"
 #include <fstream>
 
 
 
-
 int sc_main(int argc, char* argv[]) {
-  sad sadModule("sadModule");
+  Software SW("SW");
   //char* file = (char *)"mem_init.txt";
-  memory mem("mem", (char *)argv[1]);
+  Memory mem("mem");
 
-  sadModule.MEM(mem);
-  sadModule.sadFunction();
+  // sadModule.MEM(mem);
+  SW.softwareFunction();
+  //sc_start();
 
   return(0);
 }

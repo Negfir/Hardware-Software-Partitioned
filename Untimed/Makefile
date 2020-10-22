@@ -1,5 +1,5 @@
-output: SAD.o
-	g++ SAD.cpp -o SAD  -l systemc
+output: main.o
+	g++ main.cpp -o main  -l systemc
 
 
 clean:

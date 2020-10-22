@@ -1,52 +1,52 @@
 #include "systemc.h"
 #include "interface.h"
+//#include "bus.h"
 #include <fstream>
-#define MEM_SIZE 70000
+#define MEM_SIZE 36
 
 
-class memory: public sc_module, public simple_mem_if
+class Memory: public sc_module
 {
-  private:
-    unsigned int memData[MEM_SIZE]={0};
+public:
+    unsigned in_address;
+    unsigned in_option;
+    unsigned in_length;
+    
+    unsigned a[MEM_SIZE];
+    unsigned b[MEM_SIZE];
+    unsigned c[MEM_SIZE];
 
-  public:
-
-    memory(sc_module_name nm, char* file) : sc_module(nm)
-    {
-      ifstream init_file(file);
-      int cnt= 0;
-      int x;
-       while (init_file >> x){
-        memData[cnt++] = x;
+    //sc_port<bus_minion_if> MEM_port;
 
 
-      }
+    Memory(sc_module_name nm){
 
+        unsigned int a[MEM_SIZE]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9};
+        unsigned int b[MEM_SIZE]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9};
+        
+        // for (int i=0;i<MEM_SIZE;i++){
+        //     a[i] = a_init[i];
+        //     b[i] = b_init[i];
+        //     c[i] =0;
+        // }
 
     }
-    bool Write(unsigned int addr, unsigned int data)
+
+
+
+      //SC_HAS_PROCESS(Memory);
+
+    void memoryFunction()
     {
-      if (addr < MEM_SIZE)
-      {
-        memData[addr]=data;
-        cout << "data="<< data << " writen successfully! " << endl;
-        return true;
-      }
-      cout << "!!! Writing failed !!!" <<endl;
-      return false;
+    while(1){
+
+        //MEM_port->Listen(in_address, in_option, in_length);
+
       }
 
-    bool Read(unsigned int addr, unsigned int& data)
-    {
-      if (addr < MEM_SIZE)
-      {
-        data=memData[addr];
-        
-        return true;
-      }
-      cout << "!!! Reading failed !!!" <<endl;
-      return false;
-      }
+    }
+
+
 
 
   };

@@ -1,7 +1,11 @@
 #include "systemc.h"
 #include "interface.h"
 #include <fstream>
-#define MEM_SIZE 70000
+#include <stdio.h>
+#define MEM_SIZE 36
+
+#ifndef __bus_H_INCLUDED__   
+#define __bus_H_INCLUDED__
 
 
 class Bus: public sc_module, public bus_master_if, public bus_minion_if
@@ -17,14 +21,13 @@ public:
     sc_event bus_unlock;
     sc_event req2bus;
 
+    unsigned buffer_data;
+
     unsigned req_id;
     unsigned address;
     unsigned option;
     unsigned length;
-    
-    Bus_request mst_request;   // request coming
-    Bus_request curr_schedule;  // current scheduled request
-    Bus_lock_status bus_status;  // lock or unlock
+
     unsigned timer;
 
 
@@ -43,15 +46,14 @@ public:
     {
         //bus_status = UNLOCK;  
         timer =0;
-        
+        buffer_data=0;
         //SC_THREAD(Bus_process);
 
     }
-    SC_HAS_PROCESS(Bus);
+    //SC_HAS_PROCESS(Bus);
 
-    void Bus::Request(unsigned mst_id, unsigned addr, unsigned op, unsigned len)
+    void Request(unsigned mst_id, unsigned addr, unsigned op, unsigned len)
     {
-        //wait(2*CYCLE_TIME,SC_NS);  // put it in begginning, otherwise it will be scheduled before notify
         
         req_id = mst_id;
         address = addr;
@@ -79,7 +81,7 @@ public:
         }
     }
 
-    bool ReadData(unsigned &data)
+    void ReadData(unsigned &data)
     {
         
         data = buffer_data;
@@ -93,16 +95,16 @@ public:
         DataDone.notify();
   
         
-        return true;
+        return ;
     }
 
-    bool WriteData(unsigned data)
+    void WriteData(unsigned data)
     {
         
         buffer_data = data;
         DataReady.notify();
         
-        return true;
+        return ;
     }
 
 
@@ -128,24 +130,27 @@ public:
 
     }
 
-    bool SendReadData(unsigned data)
+    void SendReadData(unsigned data)
     {
        // read_send_count++;  
         buffer_data = data;
           
         
-            return true;
+            return ;
        // }
     }
 
-    bool ReceiveWriteData(unsigned &data)
+    void ReceiveWriteData(unsigned &data)
     {
         wait(DataReady);
         data = buffer_data;
         
-        return true;
+        return ;
     }
 
 
 
   };
+
+
+  #endif
