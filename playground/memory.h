@@ -4,7 +4,7 @@
 #define MEM_SIZE 70000
 
 
-class memory: public sc_module, public bus_master_if
+class memory: public sc_module, public bus_master_if, public bus_minion_if
 {
   private:
     unsigned int memData[MEM_SIZE]={0};
@@ -21,10 +21,10 @@ class memory: public sc_module, public bus_master_if
       }
     }
 
+    //################################ Master ################################//
 
     void Request(unsigned int mst_id, unsigned int addr, unsigned int op, unsigned int len)
-    {
-        
+    {     
       cout << "hi";
     }
 
@@ -48,7 +48,28 @@ class memory: public sc_module, public bus_master_if
 
       cout << "!!! Reading failed !!!" <<endl;
       return;
-      }
+    }
+
+    //################################ Minion ################################//
+    void Listen(unsigned int &req_addr, unsigned int &req_op, unsigned int &req_len)
+    {     
+      cout << "listen";
+    }
+
+    void Acknowledge()
+    {     
+      cout << "ack";
+    }
+
+    void SendReadData(unsigned int data)
+    {     
+      cout << "send";
+    }
+
+    void ReceiveWriteData(unsigned int &data)
+    {     
+      cout << "recieve";
+    }
 
 
   };
