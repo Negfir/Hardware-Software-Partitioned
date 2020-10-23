@@ -7,6 +7,13 @@
 #ifndef __bus_H_INCLUDED__   
 #define __bus_H_INCLUDED__
 
+enum BusStatus {
+    UNLOCK,
+    WAIT,
+    LOCK,
+    ERROR
+};
+
 
 class Bus: public sc_module, public bus_master_if, public bus_minion_if
 {
@@ -16,8 +23,9 @@ public:
 
     sc_event ack_minion;
     sc_event data_received;
+    sc_event send;
 
-
+    BusStatus status;
     bool ack;
 
     unsigned int buffer_data;
@@ -47,7 +55,7 @@ public:
         timer =0;
         buffer_data=0;
         ack=false;
-        //SC_THREAD(Bus_process);
+        SC_THREAD(BusFunction);
 
     }
     SC_HAS_PROCESS(Bus);
@@ -88,12 +96,13 @@ public:
     {
 
         data=buffer_data; 
-        read_count ++;
-        data_received.notify();
+        read_count++;
         cout << "data="<< data << " Read successfully! " << endl;
+        data_received.notify();
+        wait(send);
         if(read_count==length){   // finish read
             read_count =0;
-            
+        
                // this must be notify earier than bus_unlock, otherwise memroy cannot catch request
             
             return;
@@ -125,6 +134,7 @@ public:
       
       buffer_data = data;
       cout << "sending " << buffer_data <<endl;
+      send.notify();
       wait(data_received);
       return;
     }
@@ -134,6 +144,12 @@ public:
         data = buffer_data;
       cout << "reciving " << data <<endl;
       return;
+    }
+
+    void BusFunction()
+    {
+
+
     }
 
 

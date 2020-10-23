@@ -51,7 +51,7 @@ SC_MODULE (Software)
 
       for(int kk=0;kk<4;kk++){
           SW_port->ReadData(data);
-          //cout << n << " - ";
+          cout <<"==="<< data << endl;
         }
     }
 
