@@ -65,7 +65,7 @@ public:
             
                 for(int i=0;i<in_length;i++){  
                     MEM_port->ReceiveWriteData(MEM[in_address+i]);
-                    cout << "Addr is" << in_address << " - " <<MEM[in_address+i]<<endl; 
+                    cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
                 }
 
 

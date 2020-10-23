@@ -103,6 +103,8 @@ public:
         cout << "data="<< data << " Read successfully! " << endl;
         data_valid.notify();
         wait(send);
+        
+        
         if(read_count==length){   // finish read
             read_count =0;
             //cout << "aaaaaaaaaaaaaaaaaaaaaa";
@@ -134,10 +136,13 @@ public:
 
     void SendReadData(unsigned int data)
     {   
-      wait(data_valid);
+      
       buffer_data = data;
       cout << "sending " << buffer_data <<endl;
       send.notify();
+      wait(data_valid);
+      
+      
       
       return;
     }

@@ -17,6 +17,7 @@ int sc_main(int argc, char* argv[]) {
   mem.MEM_port(bus);
   //SW.softwareFunction();
   sc_start();
+   //sc_start();
 
   return(0);
 }
