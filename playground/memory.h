@@ -3,6 +3,9 @@
 #include <fstream>
 #define MEM_SIZE 70000
 
+#ifndef __memory_H_INCLUDED__   
+#define __memory_H_INCLUDED__
+
 
 class memory: public sc_module, public bus_master_if, public bus_minion_if
 {
@@ -73,3 +76,6 @@ class memory: public sc_module, public bus_master_if, public bus_minion_if
 
 
   };
+
+
+#endif
