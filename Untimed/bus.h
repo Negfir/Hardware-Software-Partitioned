@@ -22,8 +22,9 @@ public:
     
 
     sc_event ack_minion;
-    sc_event data_received;
+    sc_event data_valid;
     sc_event send;
+    sc_event recieve;
 
     BusStatus status;
     bool ack;
@@ -86,8 +87,10 @@ public:
 
     void WriteData(unsigned int data)
     {
-        buffer_data=data;
-        cout << "data="<< data << " writen successfully! " << endl;
+        buffer_data = data;
+        data_valid.notify();
+        wait(recieve);
+        //cout << "data="<< data << " writen successfully! " << endl;
      return;
    
       }
@@ -98,12 +101,12 @@ public:
         data=buffer_data; 
         read_count++;
         cout << "data="<< data << " Read successfully! " << endl;
-        data_received.notify();
+        data_valid.notify();
         wait(send);
         if(read_count==length){   // finish read
             read_count =0;
-        
-               // this must be notify earier than bus_unlock, otherwise memroy cannot catch request
+            //cout << "aaaaaaaaaaaaaaaaaaaaaa";
+              
             
             return;
         }
@@ -131,18 +134,26 @@ public:
 
     void SendReadData(unsigned int data)
     {   
-      
+      wait(data_valid);
       buffer_data = data;
       cout << "sending " << buffer_data <<endl;
       send.notify();
-      wait(data_received);
+      
       return;
     }
 
     void ReceiveWriteData(unsigned int &data)
     {     
+        wait(data_valid);
+        
         data = buffer_data;
-      cout << "reciving " << data <<endl;
+        cout << "receiving " << data <<endl;
+        read_count++;
+        recieve.notify();
+        if(read_count==length){
+            read_count =0;
+            
+        }
       return;
     }
 

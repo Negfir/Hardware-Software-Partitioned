@@ -45,14 +45,17 @@ SC_MODULE (Software)
     // }
 
     //SW_port->WriteData(3);
-    SW_port->Request(0, 28, 0, 4);
+    SW_port->Request(0, 28, 1, 4);
     //SW_port->ReadData(data);
     if(SW_port->WaitForAcknowledge(0)){
-
-      for(int kk=0;kk<4;kk++){
-          SW_port->ReadData(data);
-          cout <<"==="<< data << endl;
-        }
+        SW_port->WriteData(1);
+        SW_port->WriteData(2);
+        SW_port->WriteData(3);
+        SW_port->WriteData(4);
+      // for(int kk=0;kk<4;kk++){
+      //     SW_port->WriteData(kk);
+      //     //cout <<"==="<< data << endl;
+      //   }
     }
 
     return ;
