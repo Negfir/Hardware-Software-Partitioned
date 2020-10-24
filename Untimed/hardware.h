@@ -1,52 +1,98 @@
 #include "systemc.h"
 #include "interface.h"
-#include <fstream>
-#define MEM_SIZE 70000
+#define MEM_SIZE 108
+#define a_ADDS 0
+#define b_ADDR 36
+#define c_ADRS 72
+#define MEM_SIZE 108
+#define MEM_READ 0
+#define MEM_Write 1
+#define OP 2
 
 
-class memory: public sc_module, public simple_mem_if
+
+SC_MODULE (Hardware)
 {
-  private:
-    unsigned int memData[MEM_SIZE]={0};
+public:
+    unsigned int in_address;
+    unsigned int in_option;
+    unsigned int in_length;
+    unsigned int i,j;
 
-  public:
+    sc_port<bus_master_if> HW_master_port;
+    sc_port<bus_minion_if> HW_minion_port;
 
-    memory(sc_module_name nm, char* file) : sc_module(nm)
+    SC_CTOR(Hardware){
+        
+
+        SC_THREAD(hardwareMasterFunction);
+        SC_THREAD(hardwareMinionFunction);
+    }
+
+
+
+      //SC_HAS_PROCESS(Memory);
+
+    void hardwareMasterFunction()
     {
-      ifstream init_file(file);
-      int cnt= 0;
-      int x;
-       while (init_file >> x){
-        memData[cnt++] = x;
+    // while(1){
+
+    //     MEM_port->Listen(in_address, in_option, in_length);
+
+    //     if (in_option==MEM_READ && (in_address+in_length-1)<MEM_SIZE){
+    //         MEM_port->Acknowledge();
+    //         //cout << "Addr is " << in_address <<endl; 
+    //             for(int i=0;i<in_length;i++){  
+    //                 MEM_port->SendReadData(MEM[in_address+i]);
+    //                 cout << "address is" << in_address+i <<endl;
+    //             }
+    //     }
+    //     else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
+    //         MEM_port->Acknowledge();
+            
+    //             for(int i=0;i<in_length;i++){  
+    //                 MEM_port->ReceiveWriteData(MEM[in_address+i]);
+    //                 cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
+    //             }
 
 
-      }
+    //     }
 
+    //   }
 
     }
-    bool Write(unsigned int addr, unsigned int data)
-    {
-      if (addr < MEM_SIZE)
-      {
-        memData[addr]=data;
-        cout << "data="<< data << " writen successfully! " << endl;
-        return true;
-      }
-      cout << "!!! Writing failed !!!" <<endl;
-      return false;
-      }
 
-    bool Read(unsigned int addr, unsigned int& data)
+
+    void hardwareMinionFunction()
     {
-      if (addr < MEM_SIZE)
-      {
-        data=memData[addr];
-        
-        return true;
-      }
-      cout << "!!! Reading failed !!!" <<endl;
-      return false;
-      }
+     while(1){
+
+        HW_minion_port->Listen(in_address, in_option, in_length);
+
+        if (in_option==OP){
+            HW_minion_port->Acknowledge(); 
+            HW_minion_port->ReceiveWriteData(i);
+            HW_minion_port->ReceiveWriteData(j);
+            //HW_minion_port->ReceiveWriteData(c_start);
+            cout << "HW "<< i << j <<endl;
+        }
+
+        // else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
+        //     MEM_port->Acknowledge();
+            
+        //         for(int i=0;i<in_length;i++){  
+        //             MEM_port->ReceiveWriteData(MEM[in_address+i]);
+        //             cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
+        //         }
+
+
+        // }
+
+       }
+
+    }
+
+
 
 
   };

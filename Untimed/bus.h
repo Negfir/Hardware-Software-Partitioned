@@ -14,6 +14,32 @@ enum BusStatus {
     ERROR
 };
 
+class Bus_request
+{
+public:
+
+    unsigned int master_id;
+    unsigned int address;
+    unsigned int option;
+    unsigned int length;
+    unsigned int read_count;
+    unsigned int write_count;
+
+    
+    // default constructor
+    Bus_request()
+    {
+        read_count =0;
+        write_count =0;
+
+        master_id =0;
+        address =0;
+        option =0;
+        length =0;
+    }
+    
+};
+
 
 class Bus: public sc_module, public bus_master_if, public bus_minion_if
 {
@@ -36,7 +62,12 @@ public:
     unsigned int option;
     unsigned int length;
     unsigned int read_count;
+    unsigned int write_count;
     unsigned timer;
+
+    Bus_request next_req;   // request coming
+    Bus_request cur_req;  // current scheduled request
+
 
 
     // memory(sc_module_name nm) : sc_module(nm)
@@ -76,9 +107,10 @@ public:
     bool WaitForAcknowledge(unsigned int mst_id)
     {
     while(1){  
+            cout << "waiting..."<<endl;
             wait(ack_minion);
             if(mst_id==master_id){  
-                    ack=false;
+                cout << "true"<<endl;
                     return true;
             }
         }
@@ -87,6 +119,7 @@ public:
 
     void WriteData(unsigned int data)
     {
+        cout << "Write req"<<endl;
         buffer_data = data;
         data_valid.notify();
         wait(recieve);
@@ -121,6 +154,7 @@ public:
     //################################ Minion ################################//
     void Listen(unsigned int &req_addr, unsigned int &req_op, unsigned int &req_len)
     {     
+        //cout << "Listening "<<req_op<<endl;
       req_addr=address;
       req_op=option;
       req_len=length;
@@ -129,6 +163,7 @@ public:
 
     void Acknowledge()
     {     
+        cout << "Ack "<<endl;
       ack=true;
       ack_minion.notify();
       return;
@@ -153,10 +188,10 @@ public:
         
         data = buffer_data;
         cout << "receiving " << data <<endl;
-        read_count++;
+        write_count++;
         recieve.notify();
-        if(read_count==length){
-            read_count =0;
+        if(write_count==length){
+            write_count =0;
             
         }
       return;

@@ -48,8 +48,8 @@ public:
 
     void memoryFunction()
     {
-    while(1){
-
+        while(true){
+            cout << "in memory" << endl;
         MEM_port->Listen(in_address, in_option, in_length);
 
         if (in_option==MEM_READ && (in_address+in_length-1)<MEM_SIZE){
@@ -61,6 +61,7 @@ public:
                 }
         }
         else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
+            cout << "in write" << endl;
             MEM_port->Acknowledge();
             
                 for(int i=0;i<in_length;i++){  
@@ -70,8 +71,8 @@ public:
 
 
         }
-
-      }
+}
+      
 
     }
 

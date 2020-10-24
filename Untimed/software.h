@@ -55,9 +55,16 @@ SC_MODULE (Software)
     }
       for(i=0; i<SIZE; i++) // Total Cycles: 7579000, Execs: 1000, Iters: 5
         for(j=0; j<SIZE; j++) // Total Cycles: 7520000, Execs: 5000, Iters: 5
+        {
+            SW_port->Request(SW_id,a_ADDS, MEM_Write, 2);
+            if(SW_port->WaitForAcknowledge(SW_id)){
+                SW_port->WriteData(i);
+                SW_port->WriteData(j);
+            }
+
           for(k=0; k<SIZE; k++) // Total Cycles: 7225000, Execs: 25000, Iters: 5
             c[i][j] += a[i][k] * b[k][j];
-            cout << c[i][j] << "-";
+        }  
     }
 
 
