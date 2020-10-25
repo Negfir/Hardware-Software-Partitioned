@@ -20,8 +20,15 @@ int sc_main(int argc, char* argv[]) {
   HW.HW_master_port(bus);
   HW.HW_minion_port(bus);
   //SW.softwareFunction();
+  sc_trace_file *wf = sc_create_vcd_trace_file("WaveForm");
+ 
+  sc_trace(wf, bus.data_valid , "addr" );
+  //sc_trace(wf, SW.SW_port , "addr" );
+
+ 
   sc_start();
-   //sc_start();
+
+  sc_close_vcd_trace_file(wf);
 
   return(0);
 }
