@@ -4,9 +4,10 @@
 #include <fstream>
 #include <stdio.h>
 #define MEM_SIZE 108
-#define a_ADDS 0
+#define SIZE 6
+#define a_ADDR 0
 #define b_ADDR 36
-#define c_ADRS 72
+#define c_ADDR 72
 #define MEM_SIZE 108
 #define MEM_READ 0
 #define MEM_Write 1
@@ -67,10 +68,19 @@ public:
                 for(int i=0;i<in_length;i++){  
                     MEM_port->ReceiveWriteData(MEM[in_address+i]);
                     cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
+
                 }
+
+        for(int i=0; i<SIZE; i++) {
+            for(int j=0; j<SIZE; j++) {
+                cout <<"#" <<MEM[c_ADDR+ i*SIZE+j]<<"#";
+            }
+            cout<< endl;
+        }
 
 
         }
+
 
       }
 

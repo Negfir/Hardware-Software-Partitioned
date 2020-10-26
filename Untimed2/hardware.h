@@ -100,6 +100,10 @@ public:
             c_reg=c_reg+a_reg[k]*b_reg[k];
             cout << "******************"<<a_reg[k]<<" - "<<b_reg[k]<<endl;
           }
+          HW_master_port->Request(HW_id, c_ADDR+(current_address.i)*SIZE+current_address.j, MEM_Write, 1);
+          if(HW_master_port->WaitForAcknowledge(HW_id)){
+            HW_master_port->WriteData(c_reg);
+          }
           cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg << endl;
           calcDone.notify();
 

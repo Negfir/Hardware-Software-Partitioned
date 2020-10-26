@@ -22,9 +22,9 @@ SC_MODULE (Software)
 {
     sc_port<bus_master_if> SW_port;
 
-    unsigned a[SIZE][SIZE];
-    unsigned b[SIZE][SIZE];
-    unsigned c[SIZE][SIZE];
+    unsigned int a[SIZE][SIZE];
+    unsigned int b[SIZE][SIZE];
+    unsigned int c[SIZE][SIZE];
     
     
     unsigned result;
@@ -41,7 +41,7 @@ SC_MODULE (Software)
     for (n=0; n<LOOP; n++) // Total Cycles: 8186006, Execs: 1, Iters: 1000
     {
 
-    SW_port->Request(SW_id, c_ADRS, MEM_Write, 36);
+    SW_port->Request(SW_id, c_ADDR, MEM_Write, 36);
     if(SW_port->WaitForAcknowledge(SW_id)){
       for(i=0; i<SIZE; i++) // Total Cycles: 579000, Execs: 1000, Iters: 5
         {
@@ -62,15 +62,27 @@ SC_MODULE (Software)
                 SW_port->WriteData(j);
                 //cout <<"====="<<data;
             }
-
-
-          for(k=0; k<SIZE; k++) // Total Cycles: 7225000, Execs: 25000, Iters: 5
-          {
-            c[i][j] += a[i][k] * b[k][j];
-            //cout  <<n<<"-"<< i<<"-"<<j<<"-"<<k<<"-"<<endl;
         }
+
+        //   for(k=0; k<SIZE; k++) // Total Cycles: 7225000, Execs: 25000, Iters: 5
+        //   {
+        //     c[i][j] += a[i][k] * b[k][j];
+        // }
+
+        // SW_port->Request(SW_id, c_ADRS, MEM_READ, 36);
+        // if(SW_port->WaitForAcknowledge(SW_id)){
+        //     for(i=0; i<SIZE; i++) 
+        //         for(j=0; j<SIZE; j++) 
+        //             SW_port->ReadData(c[i][j]);
+                    
+            
+        // }
+    
     }
-    }
+
+    // for(i=0; i<SIZE; i++) 
+    //     for(j=0; j<SIZE; j++) 
+    //         cout <<"################################################################" <<c[i*SIZE+j]<<endl;
 
 // SW_port->Request(SW_id, c_ADRS, 0, 1);
 // if(SW_port->WaitForAcknowledge(SW_id)){
