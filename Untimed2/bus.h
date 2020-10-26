@@ -95,6 +95,7 @@ public:
         timer =0;
         buffer_data=0;
         ack=false;
+        status=UNLOCK;
         SC_THREAD(BusFunction);
         
         sensitive << clk.pos();  
@@ -124,8 +125,9 @@ public:
     {
     while(1){  
             cout << "WaitForAcknowledge"<<endl;
-            cout <<cur_req.address<< "-"<<cur_req.option<< "-"<<cur_req.length<<endl;
+            
             wait(ack_minion);
+            cout <<cur_req.address<< "-"<<cur_req.option<< "-"<<cur_req.length<<endl;
             if(mst_id==cur_req.master_id){  
                     ack=false;
                     return true;
@@ -150,6 +152,7 @@ public:
 
         data=buffer_data; 
         cur_req.read_count++;
+        //cur_req.address++;
         cout << "data="<< data << " Read successfully! " <<cur_req.read_count<< cur_req.length<<endl;
         data_valid.notify();
         
@@ -208,6 +211,7 @@ public:
         data = buffer_data;
         cout << "receiving " << data <<endl;
          cur_req.read_count++;
+         //cur_req.address++;
         recieve.notify();
         if(cur_req.read_count==cur_req.length){
             cur_req.read_count =0;
@@ -237,9 +241,9 @@ public:
             if(!queue.empty()){
                 cout << "size is " <<queue.size()<<endl;
                 cur_req = queue.front();
-                cout << "Cur is " << cur_req.address<<endl;
+                cout << "Cur is " << cur_req.length<<endl;
                 queue.pop();
-                cout << "in Q";
+                //cout << "in Q";
                 busToListen.notify();
 
                 wait(busUnlock);

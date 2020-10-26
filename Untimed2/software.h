@@ -4,9 +4,9 @@
 #include <fstream>
 #define SIZE 6
 #define LOOP 3
-#define a_ADDS 0
+#define a_ADDR 0
 #define b_ADDR 36
-#define c_ADRS 72
+#define c_ADDR 72
 #define MEM_SIZE 108
 //Operations
 #define MEM_READ 0
@@ -56,7 +56,7 @@ SC_MODULE (Software)
       for(i=0; i<SIZE; i++) // Total Cycles: 7579000, Execs: 1000, Iters: 5
         for(j=0; j<SIZE; j++) // Total Cycles: 7520000, Execs: 5000, Iters: 5
         {
-            SW_port->Request(SW_id,28, HW_OPs, 2);
+            SW_port->Request(SW_id,0, HW_OPs, 2);
             if(SW_port->WaitForAcknowledge(SW_id)){
                 SW_port->WriteData(i);
                 SW_port->WriteData(j);
@@ -83,17 +83,17 @@ SC_MODULE (Software)
 //     }
 
     //SW_port->WriteData(3);
-    // SW_port->Request(0, 28, 1, 4);
+    // SW_port->Request(0, 28, 0, 4);
     // //SW_port->ReadData(data);
     // if(SW_port->WaitForAcknowledge(0)){
-    //     SW_port->WriteData(0);
-    //     SW_port->WriteData(2);
-    //     SW_port->WriteData(3);
-    //     SW_port->WriteData(4);
-    //   // for(int kk=0;kk<4;kk++){
-    //   //     SW_port->ReadData(data);
-    //   //     cout <<"==="<< data << endl;
-    //   //   }
+    //     // SW_port->WriteData(0);
+    //     // SW_port->WriteData(2);
+    //     // SW_port->WriteData(3);
+    //     // SW_port->WriteData(4);
+    //   for(int kk=0;kk<4;kk++){
+    //       SW_port->ReadData(data);
+    //       cout <<"==="<< data << endl;
+    //     }
 
 
     // }
