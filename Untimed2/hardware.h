@@ -1,5 +1,7 @@
 #include "systemc.h"
 #include "interface.h"
+#include <queue>
+
 #define SIZE 6
 #define LOOP 3
 #define a_ADDR 0
@@ -15,6 +17,24 @@
 #define HW_id 1
 
 
+class InputAddress
+{
+public:
+
+    unsigned int i;
+    unsigned int j;
+
+    
+    // default constructor
+    InputAddress()
+    {
+      i=0;
+      j=0;
+    }
+    
+};
+
+
 SC_MODULE (Hardware)
 {
 public:
@@ -23,42 +43,71 @@ public:
     unsigned int in_length;
     unsigned int i,j;
     sc_event start;
+    sc_event calcDone;
 
     unsigned int a_reg[SIZE];
     unsigned int b_reg[SIZE];
     unsigned int c_reg;
 
+    InputAddress input_address;
+    InputAddress current_address;
+
     sc_port<bus_master_if> HW_master_port;
     sc_port<bus_minion_if> HW_minion_port;
 
+    std::queue<InputAddress> queue;
+
     SC_CTOR(Hardware){
         
-
+        c_reg=0;
         SC_THREAD(hardwareMasterFunction);
         SC_THREAD(hardwareMinionFunction);
     }
 
 
 
-      //SC_HAS_PROCESS(Memory);
+      //SC_HAS_PROCESS(hardware);
 
     void hardwareMasterFunction()
     {
     while(1){
-        wait(start);
+        
+
+    if(!queue.empty()){
+        current_address = queue.front();
+        queue.pop();
+
+        c_reg=0;
         cout << "#######Starting Mul#########"<<endl;
 
-        HW_master_port->Request(HW_id, a_ADDS+i*SIZE, MEM_READ, SIZE);
+        HW_master_port->Request(HW_id, a_ADDR+current_address.i*SIZE, MEM_READ, SIZE);
         if(HW_master_port->WaitForAcknowledge(HW_id)){
           for(int k=0; k<SIZE;  k++){
-            HW_master_port->ReadData(a_reg[i*SIZE+k]);
-            cout << "#A is"<< a_reg[i*SIZE+k] <<endl;
+            HW_master_port->ReadData(a_reg[k]);
+            cout << "###A is"<< a_reg[k] <<endl;
             }
           }
 
+        for(int k=0; k<SIZE;  k++){
+            HW_master_port->Request(HW_id, b_ADDR+k*SIZE+current_address.j, MEM_READ, 1);
+            if(HW_master_port->WaitForAcknowledge(HW_id)){     
+            HW_master_port->ReadData(b_reg[k]);
+            cout << "###B is"<< b_reg[k] <<endl;
+            }
+          }
+
+          for(int k=0; k<SIZE;  k++){
+            c_reg=c_reg+a_reg[k]*b_reg[k];
+            cout << "******************"<<a_reg[k]<<" - "<<b_reg[k]<<endl;
+          }
+          cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg << endl;
+          calcDone.notify();
 
       }
-
+      else{
+        wait(start);
+      }
+      }
     }
 
 
@@ -70,13 +119,14 @@ public:
 
         if (in_option==HW_OPs){
             HW_minion_port->Acknowledge(); 
-            HW_minion_port->ReceiveWriteData(i);
-            HW_minion_port->ReceiveWriteData(j);
+            HW_minion_port->ReceiveWriteData(input_address.i);
+            HW_minion_port->ReceiveWriteData(input_address.j);
+            queue.push(input_address);
             //HW_minion_port->ReceiveWriteData(c_start);
-            cout << "HW "<< i << j <<endl;
+            cout << "===================================================HW "<< i << j <<endl;
             start.notify();
         }
-
+        //wait(calcDone);
         // else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
         //     MEM_port->Acknowledge();
             
