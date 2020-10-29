@@ -2,7 +2,7 @@
 #include "interface.h"
 #include <queue>
 
-#define SIZE 6
+//#define SIZE 6
 #define LOOP 3
 #define a_ADDR 0
 #define b_ADDR 36
@@ -12,6 +12,8 @@
 #define MEM_READ 0
 #define MEM_Write 1
 #define HW_OPs 2
+#define CHECK_FLAG 3
+
 //IDs
 #define SW_id 0
 #define HW_id 1
@@ -49,6 +51,10 @@ public:
     unsigned int b_reg[SIZE];
     unsigned int c_reg;
 
+    unsigned int done_FLAG;
+
+    unsigned int matrix_size;
+
     InputAddress input_address;
     InputAddress current_address;
 
@@ -60,6 +66,7 @@ public:
     SC_CTOR(Hardware){
         
         c_reg=0;
+        done_FLAG=0;
         SC_THREAD(hardwareMasterFunction);
         SC_THREAD(hardwareMinionFunction);
     }
@@ -104,8 +111,18 @@ public:
           if(HW_master_port->WaitForAcknowledge(HW_id)){
             HW_master_port->WriteData(c_reg);
           }
-          cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg << endl;
-          calcDone.notify();
+          //cout <<matrix_size;
+          if (current_address.i==matrix_size-1 && current_address.j==matrix_size-1){
+            done_FLAG=1;
+            cout <<"*******************************END**********************************";
+          }          
+          cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg <<endl;
+          cout <<matrix_size;
+          //calcDone.notify();
+          //HW_minion_port->Acknowledge();
+          if (current_address.i==matrix_size-1 && current_address.j==matrix_size-1){
+            cout <<"*******************************END**********************************";
+          }  
           
 
       }
@@ -127,9 +144,21 @@ public:
             HW_minion_port->ReceiveWriteData(input_address.i);
             HW_minion_port->ReceiveWriteData(input_address.j);
             queue.push(input_address);
+            matrix_size=in_address;
             //HW_minion_port->ReceiveWriteData(c_start);
             cout << "===================================================HW "<< i << j <<endl;
             start.notify();
+            //wait(calcDone);
+            
+
+        }
+
+        else if (in_option==CHECK_FLAG){
+            HW_minion_port->Acknowledge();
+            HW_minion_port->SendReadData(done_FLAG);
+            
+            cout << "===================================================FLAG is: "<< done_FLAG <<endl;
+            done_FLAG=0;
             //wait(calcDone);
             
 

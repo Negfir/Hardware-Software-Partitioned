@@ -3,7 +3,7 @@
 #include "bus.h"
 #include <fstream>
 #define SIZE 6
-#define LOOP 3
+#define LOOP 1000
 #define a_ADDR 0
 #define b_ADDR 36
 #define c_ADDR 72
@@ -12,6 +12,7 @@
 #define MEM_READ 0
 #define MEM_Write 1
 #define HW_OPs 2
+#define CHECK_FLAG 3
 //IDs
 #define SW_id 0
 #define HW_id 1
@@ -25,6 +26,7 @@ SC_MODULE (Software)
     unsigned int a[SIZE][SIZE];
     unsigned int b[SIZE][SIZE];
     unsigned int c[SIZE][SIZE];
+    unsigned int done_FLAG=0;
     
     
     unsigned result;
@@ -40,7 +42,7 @@ SC_MODULE (Software)
 
     for (n=0; n<LOOP; n++) // Total Cycles: 8186006, Execs: 1, Iters: 1000
     {
-
+    done_FLAG=0;
     SW_port->Request(SW_id, c_ADDR, MEM_Write, 36);
     if(SW_port->WaitForAcknowledge(SW_id)){
       for(i=0; i<SIZE; i++) // Total Cycles: 579000, Execs: 1000, Iters: 5
@@ -56,27 +58,25 @@ SC_MODULE (Software)
       for(i=0; i<SIZE; i++) // Total Cycles: 7579000, Execs: 1000, Iters: 5
         for(j=0; j<SIZE; j++) // Total Cycles: 7520000, Execs: 5000, Iters: 5
         {
-            SW_port->Request(SW_id,0, HW_OPs, 2);
+            SW_port->Request(SW_id,6, HW_OPs, 2);
             if(SW_port->WaitForAcknowledge(SW_id)){
                 SW_port->WriteData(i);
                 SW_port->WriteData(j);
                 //cout <<"====="<<data;
             }
+
+            // if(SW_port->WaitForAcknowledge(SW_id)){
+            //         cout<<"************************************************************************";
+            //     //cout <<"====="<<data;
+            // }
         }
 
-        //   for(k=0; k<SIZE; k++) // Total Cycles: 7225000, Execs: 25000, Iters: 5
-        //   {
-        //     c[i][j] += a[i][k] * b[k][j];
-        // }
-
-        // SW_port->Request(SW_id, c_ADRS, MEM_READ, 36);
-        // if(SW_port->WaitForAcknowledge(SW_id)){
-        //     for(i=0; i<SIZE; i++) 
-        //         for(j=0; j<SIZE; j++) 
-        //             SW_port->ReadData(c[i][j]);
-                    
-            
-        // }
+        while (done_FLAG!=1){
+        SW_port->Request(SW_id, 0, CHECK_FLAG, 1);
+        if(SW_port->WaitForAcknowledge(SW_id)){ 
+            SW_port->ReadData(done_FLAG);
+        }   
+        }
     
     }
 
