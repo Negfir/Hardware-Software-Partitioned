@@ -116,7 +116,7 @@ public:
       next_req.length=len;
       
       queue.push(next_req);
-      cout << "Got request from " << queue.front().address <<endl;
+      //cout << "Got request from " << queue.front().address <<endl;
       request.notify();
       //return;
     }
@@ -124,7 +124,7 @@ public:
     bool WaitForAcknowledge(unsigned int mst_id)
     {
     while(1){  
-            cout << "WaitForAcknowledge"<<endl;
+            //cout << "WaitForAcknowledge"<<endl;
             
             wait(ack_minion);
             cout <<cur_req.address<< "-"<<cur_req.option<< "-"<<cur_req.length<<endl;
@@ -138,7 +138,7 @@ public:
 
     void WriteData(unsigned int data)
     {
-        cout << "WriteData"<<endl;
+        //cout << "WriteData"<<endl;
         buffer_data = data;
         data_valid.notify();
         wait(recieve);
@@ -153,13 +153,13 @@ public:
         data=buffer_data; 
         cur_req.read_count++;
         //cur_req.address++;
-        cout << "data="<< data << " Read successfully! " <<cur_req.read_count<< cur_req.length<<endl;
+        //cout << "data="<< data << " Read successfully! " <<cur_req.read_count<< cur_req.length<<endl;
         data_valid.notify();
         
         
         if(cur_req.read_count==cur_req.length){   // finish read
             cur_req.read_count =0;
-            cout << "aaaaaaaaaaaaaaaaaaaaaa";
+            //cout << "aaaaaaaaaaaaaaaaaaaaaa";
               busUnlock.notify();
             
             return;
@@ -184,7 +184,7 @@ public:
 
     void Acknowledge()
     {     
-        cout << "Acknowledge"<<endl;
+        //cout << "Acknowledge"<<endl;
 
       ack=true;
       ack_minion.notify();
@@ -195,7 +195,7 @@ public:
     {   
       
       buffer_data = data;
-      cout << "sending " << buffer_data <<endl;
+      //cout << "sending " << buffer_data <<endl;
       send.notify();
       wait(data_valid);
       
@@ -209,7 +209,7 @@ public:
         wait(data_valid);
         
         data = buffer_data;
-        cout << "receiving " << data <<endl;
+        //cout << "receiving " << data <<endl;
          cur_req.read_count++;
          //cur_req.address++;
         recieve.notify();
@@ -241,7 +241,7 @@ public:
             if(!queue.empty()){
                 cout << "size is " <<queue.size()<<endl;
                 cur_req = queue.front();
-                cout << "Cur is " << cur_req.length<<endl;
+                //cout << "Cur is " << cur_req.length<<endl;
                 queue.pop();
                 //cout << "in Q";
                 busToListen.notify();
@@ -249,7 +249,7 @@ public:
                 wait(busUnlock);
             }
             else{
-                cout << "no req";
+                //cout << "no req";
                 wait(request);
                 //cout << "no req";
             }

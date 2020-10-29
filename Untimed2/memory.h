@@ -59,7 +59,7 @@ public:
             //cout << "Addr is " << in_address <<endl; 
                 for(int i=0;i<in_length;i++){  
                     MEM_port->SendReadData(MEM[in_address+i]);
-                    cout << "address is" << in_address+i <<endl;
+                    //cout << "address is" << in_address+i <<endl;
                 }
         }
         else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
@@ -67,7 +67,7 @@ public:
             
                 for(int i=0;i<in_length;i++){  
                     MEM_port->ReceiveWriteData(MEM[in_address+i]);
-                    cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
+                    //cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
 
                 }
 

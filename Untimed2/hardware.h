@@ -106,6 +106,7 @@ public:
           }
           cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg << endl;
           calcDone.notify();
+          
 
       }
       else{
@@ -122,13 +123,16 @@ public:
         HW_minion_port->Listen(in_address, in_option, in_length);
 
         if (in_option==HW_OPs){
-            HW_minion_port->Acknowledge(); 
+            HW_minion_port->Acknowledge();
             HW_minion_port->ReceiveWriteData(input_address.i);
             HW_minion_port->ReceiveWriteData(input_address.j);
             queue.push(input_address);
             //HW_minion_port->ReceiveWriteData(c_start);
             cout << "===================================================HW "<< i << j <<endl;
             start.notify();
+            //wait(calcDone);
+            
+
         }
         //wait(calcDone);
         // else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
