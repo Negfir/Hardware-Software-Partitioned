@@ -53,11 +53,21 @@ public:
       hw_obj->HW_master_port.bind(*bus_obj);
       hw_obj->HW_minion_port.bind(*bus_obj);
       mem_obj->MEM_port.bind(*bus_obj);
-      
+
       bus_obj->clk(clk_sig);
       hw_obj->clk(clk_sig);
       sw_obj->clk(clk_sig);
       mem_obj->clk(clk_sig);
+
+
+    sc_trace_file *wf = sc_create_vcd_trace_file("WaveForm");
+   
+    sc_trace(wf, clk_sig , "clk" );
+    sc_trace(wf, hw_obj->c_reg , "dataIn" );
+
+    sc_start();
+
+    sc_close_vcd_trace_file(wf);
 
         
     }
@@ -75,8 +85,8 @@ int sc_main(int argc, char* argv[]) {
 std::string name= "TopModule";
     Top *top_obj = new Top(name.c_str());
         
-    sc_start();
-
+    //sc_start();
+    //sc_start(221686486);
    //sc_start();
 
   return(0);
