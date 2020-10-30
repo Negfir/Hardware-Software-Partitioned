@@ -2,6 +2,8 @@
 #include "interface.h"
 #include "bus.h"
 #include <fstream>
+#define CLOCK_CYCLE 20.0/3
+
 #define SIZE 6
 #define LOOP 1000
 #define a_ADDR 0
@@ -27,6 +29,9 @@ SC_MODULE (Software)
     unsigned int b[SIZE][SIZE];
     unsigned int c[SIZE][SIZE];
     unsigned int done_FLAG;
+
+    sc_in<sc_logic> clk;
+
     
     
     unsigned result;
@@ -96,6 +101,7 @@ SC_MODULE (Software)
         }
     }
     SC_THREAD(softwareFunction);
+    sensitive << clk.pos();
     
 }
 

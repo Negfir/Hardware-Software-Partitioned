@@ -3,6 +3,7 @@
 #include "bus.h"
 #include <fstream>
 #include <stdio.h>
+#define CLOCK_CYCLE 20.0/3
 #define MEM_SIZE 108
 #define SIZE 6
 #define a_ADDR 0
@@ -23,6 +24,8 @@ public:
     unsigned in_option;
     unsigned in_length;
 
+    sc_in<sc_logic> clk;
+
     unsigned int MEM[MEM_SIZE]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9,
              0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9,
              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -36,6 +39,8 @@ public:
        
 
         SC_THREAD(memoryFunction);
+
+        sensitive << clk.pos();
     }
 
 

@@ -5,6 +5,7 @@
 #include "oscillator.h"
 #include <queue>
 #define MEM_SIZE 108
+#define CLOCK_CYCLE 20.0/3
 
 #ifndef __bus_H_INCLUDED__   
 #define __bus_H_INCLUDED__
@@ -75,7 +76,7 @@ public:
     Bus_request next_req;   // request coming
     Bus_request cur_req;  // current scheduled request
 
-    sc_signal<sc_logic> clk_sig;
+;
     sc_in<sc_logic> clk;
 
     Bus(sc_module_name nm):sc_module(nm)
@@ -88,7 +89,7 @@ public:
         status=UNLOCK;
         SC_THREAD(Arbiter);
         
-        //sensitive << clk.pos();  
+        sensitive << clk.pos();  
 
 
     }
@@ -104,9 +105,11 @@ public:
       next_req.address=addr;
       next_req.option=op;
       next_req.length=len;
+
       
       queue.push(next_req);
       //cout << "Got request from " << queue.front().address <<endl;
+      
       request.notify();
       //return;
     }
@@ -144,6 +147,7 @@ public:
         cur_req.read_count++;
         //cur_req.address++;
         //cout << "data="<< data << " Read successfully! " <<cur_req.read_count<< cur_req.length<<endl;
+        wait(2*CLOCK_CYCLE, SC_NS); //Read wait
         data_valid.notify();
         
         
@@ -175,7 +179,7 @@ public:
     void Acknowledge()
     {     
         //cout << "Acknowledge"<<endl;
-
+      wait(CLOCK_CYCLE, SC_NS); //Acknowledge wait
       ack=true;
       ack_minion.notify();
       return;
@@ -197,7 +201,7 @@ public:
     void ReceiveWriteData(unsigned int &data)
     {     
         wait(data_valid);
-        
+        wait(CLOCK_CYCLE, SC_NS); // Write wait
         data = buffer_data;
         //cout << "receiving " << data <<endl;
          cur_req.read_count++;
@@ -219,16 +223,18 @@ public:
             //wait(request);
             if(!queue.empty()){
                 //cout << "Buffer size is " <<queue.size()<<endl;
+                wait(2*CLOCK_CYCLE, SC_NS); //Request wait
+
                 cur_req = queue.front();
-                //cout << "Cur is " << cur_req.length<<endl;
+            
                 queue.pop();
-                //cout << "in Q";
+            
                 busToListen.notify();
 
                 wait(busUnlock);
             }
             else{
-                //cout << "no req";
+              
                 wait(request);
           
             }

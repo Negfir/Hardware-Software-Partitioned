@@ -53,7 +53,11 @@ public:
       hw_obj->HW_master_port.bind(*bus_obj);
       hw_obj->HW_minion_port.bind(*bus_obj);
       mem_obj->MEM_port.bind(*bus_obj);
+      
       bus_obj->clk(clk_sig);
+      hw_obj->clk(clk_sig);
+      sw_obj->clk(clk_sig);
+      mem_obj->clk(clk_sig);
 
         
     }

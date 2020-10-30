@@ -1,7 +1,7 @@
 #include "systemc.h"
 #include "interface.h"
 #include <queue>
-
+#define CLOCK_CYCLE 20.0/3
 //#define SIZE 6
 #define LOOP 1000
 #define a_ADDR 0
@@ -61,6 +61,8 @@ public:
     sc_port<bus_master_if> HW_master_port;
     sc_port<bus_minion_if> HW_minion_port;
 
+    sc_in<sc_logic> clk;
+
     std::queue<InputAddress> queue;
 
     SC_CTOR(Hardware){
@@ -69,6 +71,8 @@ public:
         done_FLAG=0;
         SC_THREAD(hardwareMasterFunction);
         SC_THREAD(hardwareMinionFunction);
+
+        sensitive << clk.pos();
     }
 
 
