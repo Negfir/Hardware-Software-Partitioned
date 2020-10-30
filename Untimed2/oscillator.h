@@ -1,5 +1,5 @@
 #include "systemc.h"
-#define CLOCK_CYCLE 100.0/15
+#define CLOCK_CYCLE 20.0/3
 
 #ifndef __oscillator_H_INCLUDED__   
 #define __oscillator_H_INCLUDED__

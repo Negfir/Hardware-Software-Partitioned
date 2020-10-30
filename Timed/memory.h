@@ -1,99 +1,87 @@
 #include "systemc.h"
 #include "interface.h"
-#include "memory_rtl.h"
-#include "oscillator.h"
+#include "bus.h"
 #include <fstream>
-#define MEM_SIZE 70000
+#include <stdio.h>
+#define MEM_SIZE 108
+#define SIZE 6
+#define a_ADDR 0
+#define b_ADDR 36
+#define c_ADDR 72
+#define MEM_SIZE 108
+#define MEM_READ 0
+#define MEM_Write 1
+#define HW_MUL 2
 
-class memory: public sc_module, public simple_mem_if
+
+
+
+SC_MODULE (Memory)
 {
+public:
+    unsigned in_address;
+    unsigned in_option;
+    unsigned in_length;
 
-  
-  public:
-    sc_signal<sc_logic> clk_sig;
-    sc_signal<sc_logic>ren_sig, wen_sig, ack_sig;
-    sc_signal<int> addr_sig;
-    sc_signal<int> dataIn_sig;
-    sc_signal<int> dataOut_sig;
+    unsigned int MEM[MEM_SIZE]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9,
+             0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9,
+             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    // unsigned a[MEM_SIZE];
+    // unsigned b[MEM_SIZE];
+    // unsigned c[MEM_SIZE];
 
-  
-    MEMORY_RTL memory_rtl;
-    oscillator osc;
+    sc_port<bus_minion_if> MEM_port;
 
-    memory(sc_module_name nm, char* file) : sc_module(nm), osc("oscillator"), memory_rtl("MEMORY_RTL",(char *)file)
+    SC_CTOR(Memory){
+       
+
+        SC_THREAD(memoryFunction);
+    }
+
+
+
+      //SC_HAS_PROCESS(Memory);
+
+    void memoryFunction()
     {
+    while(1){
 
-      osc.clk(clk_sig);
+        MEM_port->Listen(in_address, in_option, in_length);
+        //cout << "MEM";
 
-      ren_sig.write(sc_logic_0);
-      wen_sig.write(sc_logic_0);
-      ack_sig.write(sc_logic_0);
+        if (in_option==MEM_READ && (in_address+in_length-1)<MEM_SIZE){
+            MEM_port->Acknowledge();
+            //cout << "Addr is " << in_address <<endl; 
+                for(int i=0;i<in_length;i++){  
+                    MEM_port->SendReadData(MEM[in_address+i]);
+                    //cout << "address is" << in_address+i <<endl;
+                }
+        }
+        else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
+            MEM_port->Acknowledge();
+            
+                for(int i=0;i<in_length;i++){  
+                    MEM_port->ReceiveWriteData(MEM[in_address+i]);
+                    //cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
 
-      memory_rtl.clk(clk_sig);
-      memory_rtl.Ren(ren_sig);
-      memory_rtl.Wen(wen_sig);
-      memory_rtl.Addr(addr_sig);
-      memory_rtl.DataIn(dataIn_sig);
-      memory_rtl.DataOut(dataOut_sig);
-      memory_rtl.Ack(ack_sig);
+                }
 
+        for(int i=0; i<SIZE; i++) {
+            for(int j=0; j<SIZE; j++) {
+                cout <<" # " <<MEM[c_ADDR+ i*SIZE+j];
+            }
+            cout<<" #"<< endl;
+        }
+
+
+        }
+
+
+      }
 
     }
 
-    // void oscillator() {
-    //   while(true)
-    //   {
-    //      clk_sig.write(sc_logic_0);
-    //      wait(5, SC_NS);
-    //      clk_sig.write(sc_logic_1);
-    //      wait(5, SC_NS);
-    //   }
-    // }
 
 
-    bool Write(unsigned int addr, unsigned int data)
-    {     
-      
-      addr_sig.write(addr);
-      dataIn_sig.write(data);
-
-      wait(10, SC_NS); //wait for address to be valid
-
-      wen_sig.write(sc_logic_1);
-      
-
-      wait(10, SC_NS); // wait for the data to be written on memory
-
-      bool ack = ack_sig.read() == sc_logic_1;
-      wen_sig.write(sc_logic_0);
-
-      
-      //cout << "Writing " << dataIn_sig<< " on address:" << addr_sig << " ack is:" << ack <<endl;
-      return ack;
-
-      }
-
-    bool Read(unsigned int addr, unsigned int& data)
-    {
-
-      
-      ren_sig.write(sc_logic_1); 
-      addr_sig.write(addr);
-      
-      wait(10, SC_NS); //wait for address to be valid
-
-      data = dataOut_sig.read();
-
-      wait(10, SC_NS); // wait for read data to be available on bus
-
-      bool ack = ack_sig.read() == sc_logic_1;
-      ren_sig.write(sc_logic_0);
-
-      
-
-      return ack;
-
-
-      }
 
   };

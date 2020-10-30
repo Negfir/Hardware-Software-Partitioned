@@ -1,5 +1,8 @@
 #include "systemc.h"
+#define CLOCK_CYCLE 20.0/3
 
+#ifndef __oscillator_H_INCLUDED__   
+#define __oscillator_H_INCLUDED__
 
 SC_MODULE(oscillator)
 {
@@ -10,9 +13,9 @@ SC_MODULE(oscillator)
     while(true)
     {
        clk.write(sc_logic_0);
-       wait(5, SC_NS);
+       wait(CLOCK_CYCLE/2, SC_NS);
        clk.write(sc_logic_1);
-       wait(5, SC_NS);
+       wait(CLOCK_CYCLE/2, SC_NS);
     }
   }
 
@@ -22,3 +25,5 @@ SC_MODULE(oscillator)
   }
 
 };
+
+#endif
