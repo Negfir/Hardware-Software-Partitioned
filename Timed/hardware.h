@@ -122,8 +122,6 @@ public:
           //cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg <<endl;
           if (current_address.i==matrix_size-1 && current_address.j==matrix_size-1){
             done_FLAG=1;
-        double loop6_end = sc_time_stamp().to_double ();
-        cout<<endl<<"Total 36 marices Multiplying: "<<int((loop6_end-loop5_start)/CLOCK_CYCLE)+1<<endl;
             //cout <<"*******************************END**********************************"<<endl;
           }          
           //cout <<endl;
