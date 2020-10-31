@@ -73,9 +73,9 @@ public:
 
         for(int i=0; i<SIZE; i++) {
             for(int j=0; j<SIZE; j++) {
-                cout <<" # " <<MEM[c_ADDR+ i*SIZE+j];
+               // cout <<" # " <<MEM[c_ADDR+ i*SIZE+j];
             }
-            cout<<" #"<< endl;
+           // cout<<" #"<< endl;
         }
 
 

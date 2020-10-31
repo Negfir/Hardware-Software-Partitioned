@@ -62,8 +62,9 @@ public:
 
     sc_trace_file *wf = sc_create_vcd_trace_file("WaveForm");
    
-    sc_trace(wf, clk_sig , "clk" );
-    sc_trace(wf, hw_obj->c_reg , "dataIn" );
+    sc_trace(wf, sw_obj->clk , "clk" );
+    sc_trace(wf, hw_obj->c_reg , "c" );
+    sc_trace(wf, sw_obj->counter , "counter" );
 
     sc_start();
 

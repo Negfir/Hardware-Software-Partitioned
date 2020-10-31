@@ -147,7 +147,7 @@ public:
         cur_req.read_count++;
         //cur_req.address++;
         //cout << "data="<< data << " Read successfully! " <<cur_req.read_count<< cur_req.length<<endl;
-        wait(2*CLOCK_CYCLE, SC_NS); //Read wait
+        wait(2*CLOCK_CYCLE, SC_NS); //Read
         data_valid.notify();
         
         
