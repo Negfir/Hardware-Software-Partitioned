@@ -69,7 +69,7 @@ SC_MODULE (Software)
     SW_port->Request(SW_id, c_ADDR, MEM_Write, 36);
     if(SW_port->WaitForAcknowledge(SW_id)){
     cout <<endl;
-    //cout << "********************* Initializing Matrix *********************"<<endl;
+    cout << "********************* Initializing Matrix *********************"<<endl;
       for(i=0; i<SIZE; i++) 
         {
         double loop2_start = sc_time_stamp().to_double ();
@@ -108,19 +108,17 @@ SC_MODULE (Software)
 
         }
         double loop4_end = sc_time_stamp().to_double ();
-        j_time2=j_time2+int((loop4_end-loop4_start)/CLOCK_CYCLE);
         mul_j_loop=mul_j_loop+int((loop4_end-loop4_start)/CLOCK_CYCLE);
         
     }
         double loop3_end = sc_time_stamp().to_double ();
-        //cout<<endl<<"Total cycles of loop j cycles: "<<j_time2<<endl;
         mul_i_loop=mul_i_loop+int((loop3_end-loop3_start)/CLOCK_CYCLE);
         
 
         //waiting for hardware
         double wait_start = sc_time_stamp().to_double ();
         while (done_FLAG!=1){
-        wait(20*CLOCK_CYCLE);
+        wait(15*CLOCK_CYCLE);
         SW_port->Request(SW_id, 0, CHECK_FLAG, 1);
         if(SW_port->WaitForAcknowledge(SW_id)){ 
             SW_port->ReadData(done_FLAG);

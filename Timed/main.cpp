@@ -62,13 +62,13 @@ public:
 
     sc_trace_file *wf = sc_create_vcd_trace_file("WaveForm");
    
-    sc_trace(wf, sw_obj->clk , "clk" );
-    sc_trace(wf, hw_obj->c_reg , "c" );
-    sc_trace(wf, sw_obj->counter , "counter" );
+    // sc_trace(wf, sw_obj->clk , "clk" );
+    // sc_trace(wf, hw_obj->c_reg , "c" );
+    // sc_trace(wf, sw_obj->counter , "counter" );
 
-    sc_start();
+    // sc_start();
 
-    sc_close_vcd_trace_file(wf);
+    // sc_close_vcd_trace_file(wf);
 
         
     }
@@ -88,7 +88,7 @@ std::string name= "TopModule";
         
     //sc_start();
     //sc_start(221686486);
-   //sc_start();
+   sc_start();
 
   return(0);
 }

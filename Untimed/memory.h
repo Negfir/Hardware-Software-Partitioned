@@ -4,9 +4,10 @@
 #include <fstream>
 #include <stdio.h>
 #define MEM_SIZE 108
-#define a_ADDS 0
+#define SIZE 6
+#define a_ADDR 0
 #define b_ADDR 36
-#define c_ADRS 72
+#define c_ADDR 72
 #define MEM_SIZE 108
 #define MEM_READ 0
 #define MEM_Write 1
@@ -32,12 +33,7 @@ public:
     sc_port<bus_minion_if> MEM_port;
 
     SC_CTOR(Memory){
-        // MEM[108]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9,
-        //      0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9,
-        //      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        // unsigned int a[MEM_SIZE]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9};
-        // unsigned int b[MEM_SIZE]={0,0,0,0,0,0,0,0,9,4,7,9,0,12,14,15,16,11,0,2,3,4,5,6,0,4,3,2,1,2,0,2,7,6,4,9};
-        
+       
 
         SC_THREAD(memoryFunction);
     }
@@ -48,31 +44,40 @@ public:
 
     void memoryFunction()
     {
-        while(true){
-            //cout << "in memory" << endl;
+    while(1){
+
         MEM_port->Listen(in_address, in_option, in_length);
+        //cout << "MEM";
 
         if (in_option==MEM_READ && (in_address+in_length-1)<MEM_SIZE){
             MEM_port->Acknowledge();
-            cout << "In read "  <<endl; 
+            //cout << "Addr is " << in_address <<endl; 
                 for(int i=0;i<in_length;i++){  
                     MEM_port->SendReadData(MEM[in_address+i]);
-                    cout << "address is" << in_address+i <<endl;
+                    //cout << "address is" << in_address+i <<endl;
                 }
         }
         else if (in_option==MEM_Write && (in_address+in_length-1)<MEM_SIZE){
-            cout << "in write" << endl;
             MEM_port->Acknowledge();
             
                 for(int i=0;i<in_length;i++){  
                     MEM_port->ReceiveWriteData(MEM[in_address+i]);
-                    cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
+                    //cout << "Addr is" << in_address+i << " - " <<MEM[in_address+i]<<endl; 
+
                 }
+
+        for(int i=0; i<SIZE; i++) {
+            for(int j=0; j<SIZE; j++) {
+                cout <<" # " <<MEM[c_ADDR+ i*SIZE+j];
+            }
+            cout<<" #"<< endl;
+        }
 
 
         }
-}
-      
+
+
+      }
 
     }
 

@@ -10,12 +10,7 @@
 #ifndef __bus_H_INCLUDED__   
 #define __bus_H_INCLUDED__
 
-enum BusStatus {
-    UNLOCK,
-    WAIT,
-    LOCK,
-    ERROR
-};
+
 
 class Bus_request
 {
@@ -28,8 +23,6 @@ public:
     unsigned int read_count;
     unsigned int write_count;
 
-    
-    // default constructor
     Bus_request()
     {
         read_count =0;
@@ -59,7 +52,6 @@ public:
     sc_event busToListen;
     sc_event busUnlock;
 
-    BusStatus status;
     bool ack;
 
     unsigned int buffer_data;
@@ -81,12 +73,11 @@ public:
 
     Bus(sc_module_name nm):sc_module(nm)
     {
-        //bus_status = UNLOCK;  
-       // osc.clk(clk_sig);
+    
         timer =0;
         buffer_data=0;
         ack=false;
-        status=UNLOCK;
+       
         SC_THREAD(Arbiter);
         
         sensitive << clk.pos();  

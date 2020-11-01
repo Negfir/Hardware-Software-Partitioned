@@ -90,7 +90,7 @@ public:
         queue.pop();
 
         c_reg=0;
-       // cout << "#######Starting Mul#########"<<endl;
+       cout <<endl<< "############## Starting Multiplication ################"<<endl;
 
         double loop5_start = sc_time_stamp().to_double ();
         HW_master_port->Request(HW_id, a_ADDR+current_address.i*SIZE, MEM_READ, SIZE);
@@ -111,21 +111,23 @@ public:
 
           for(int k=0; k<SIZE;  k++){
             c_reg=c_reg+a_reg[k]*b_reg[k];
-            //cout << "*****Multiplying: "<<a_reg[k]<<" - "<<b_reg[k]<<endl;
+            cout  <<"Multiplying: "<<a_reg[k]<<" - "<<b_reg[k]<<endl;
           }
+          cout <<endl << "c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg <<endl<<endl;
           HW_master_port->Request(HW_id, c_ADDR+(current_address.i)*SIZE+current_address.j, MEM_Write, 1);
           if(HW_master_port->WaitForAcknowledge(HW_id)){
             HW_master_port->WriteData(c_reg);
           }
 
         double loop5_end = sc_time_stamp().to_double ();
-        mul_k_loop = mul_k_loop+ int((loop5_end-loop5_start)/CLOCK_CYCLE)+1;
-        done_FLAG=1;
-          //cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg <<endl;
+        mul_k_loop =  int((loop5_end-loop5_start)/CLOCK_CYCLE)+1;
+        cout<<"Multiplying two K*1 marices cycles: "<<mul_k_loop/36<<endl;
+        mul_k_loop=0;
+          
           if (current_address.i==matrix_size-1 && current_address.j==matrix_size-1){
-            //done_FLAG=1;
-            cout<<endl<<"Multiplying two K*1 marices: "<<mul_k_loop/36<<endl;
-            mul_k_loop=0;
+            done_FLAG=1;
+            
+            
             //cout <<"*******************************END**********************************"<<endl;
           }          
           //cout <<endl;
