@@ -81,6 +81,7 @@ public:
 
     void hardwareMasterFunction()
     {
+      int mul_k_loop=0;
     while(1){
         
 
@@ -118,10 +119,13 @@ public:
           }
 
         double loop5_end = sc_time_stamp().to_double ();
-        cout<<endl<<"Multiplying two K*1 marices: "<<int((loop5_end-loop5_start)/CLOCK_CYCLE)+1<<endl;
+        mul_k_loop = mul_k_loop+ int((loop5_end-loop5_start)/CLOCK_CYCLE)+1;
+        done_FLAG=1;
           //cout << "******************c["<<current_address.i<<"]["<<current_address.j<<"] is:" << c_reg <<endl;
           if (current_address.i==matrix_size-1 && current_address.j==matrix_size-1){
-            done_FLAG=1;
+            //done_FLAG=1;
+            cout<<endl<<"Multiplying two K*1 marices: "<<mul_k_loop/36<<endl;
+            mul_k_loop=0;
             //cout <<"*******************************END**********************************"<<endl;
           }          
           //cout <<endl;
@@ -178,3 +182,5 @@ public:
 
 
   };
+
+
