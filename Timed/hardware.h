@@ -26,8 +26,6 @@ public:
     unsigned int i;
     unsigned int j;
 
-    
-    // default constructor
     InputAddress()
     {
       i=0;
@@ -120,13 +118,13 @@ public:
           }
 
         double loop5_end = sc_time_stamp().to_double ();
-        mul_k_loop =  int((loop5_end-loop5_start)/CLOCK_CYCLE)+1;
-        cout<<"Multiplying two K*1 marices cycles: "<<mul_k_loop/36<<endl;
-        mul_k_loop=0;
+        mul_k_loop = mul_k_loop+ int((loop5_end-loop5_start)/CLOCK_CYCLE)+1;
+
           
           if (current_address.i==matrix_size-1 && current_address.j==matrix_size-1){
             done_FLAG=1;
-            
+            cout<<"Multiplying two K*1 marices cycles: "<<mul_k_loop/36<<endl;
+            mul_k_loop=0;
             
             //cout <<"*******************************END**********************************"<<endl;
           }          
@@ -157,7 +155,7 @@ public:
             queue.push(input_address);
             matrix_size=in_address;
             //HW_minion_port->ReceiveWriteData(c_start);
-            //cout << "===================================================HW "<< i << j <<endl;
+            cout << "===================================================Request for HW from SW "<< input_address.i << input_address.j <<endl;
             start.notify();
             //wait(calcDone);
             
