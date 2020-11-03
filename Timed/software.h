@@ -115,7 +115,7 @@ SC_MODULE (Software)
         mul_i_loop=mul_i_loop+int((loop3_end-loop3_start)/CLOCK_CYCLE);
         
 
-        //waiting for hardware
+//################################ Waiting for hardware ################################//
         double wait_start = sc_time_stamp().to_double ();
         while (done_FLAG!=1){
         wait(15*CLOCK_CYCLE);
@@ -125,11 +125,12 @@ SC_MODULE (Software)
         }   
         }
         double wait_end = sc_time_stamp().to_double ();
-        sw_wait_loop = sw_wait_loop + int((wait_end-wait_start)/CLOCK_CYCLE);
-        
+        sw_wait_loop = sw_wait_loop + int((wait_end-wait_start)/CLOCK_CYCLE);    
     
     }
 
+  
+//################################ Timing ################################//
         long end = sc_time_stamp().to_double () ;
         cout.setf(ios::fixed, ios::floatfield);
         cout.setf(ios::showpoint);
